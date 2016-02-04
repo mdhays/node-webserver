@@ -2,8 +2,12 @@
 
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const upload = require('multer')({dest: 'tmp/uploads'});
 const PORT = process.env.PORT || 3000;
 app.set('view engine', 'jade');
+
+// app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/', (req, res) => {
   res.render('index', {
@@ -42,9 +46,25 @@ app.get('/random:min/:max', (req, res) => {
   res.send(getRandomInt(+min, +max).toString());
 });
 
-// app.get('/cal') => {
 
-// }
+
+app.get('/contact', (req, res) => {
+  res.render('contact');
+});
+
+app.post('/contact', (req, res) => {
+  console.log(req.body);
+  const name = req.body.name;
+  res.send('<h1>Thank you for contacting us!</h1>');
+});
+
+app.get('/sendphotos', (req, res) => {
+  res.render('sendphoto');
+});
+
+app.post('/sendphotos', upload.single('image'), (req, res) => {
+  res.send('<h1>Thanks for sending the pics bruh</h1>')
+});
 
 app.all('*', (req, res) => {
   res.status(403);
