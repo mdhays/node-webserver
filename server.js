@@ -1,9 +1,22 @@
 'use strict';
 
 const express = require('express');
+const fs = require('fs');
 const app = express();
 const bodyParser = require('body-parser');
-const upload = require('multer')({dest: 'tmp/uploads'});
+//const upload = require('multer')({dest: 'tmp/uploads'});
+const multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'tmp/uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.split('.')[1]) 
+      console.log(file);
+    }
+  })
+
+  var upload = multer({ storage: storage })
 const PORT = process.env.PORT || 3000;
 app.set('view engine', 'jade');
 
@@ -55,15 +68,17 @@ app.get('/contact', (req, res) => {
 app.post('/contact', (req, res) => {
   console.log(req.body);
   const name = req.body.name;
-  res.send('<h1>Thank you for contacting us!</h1>');
 });
-
+  
 app.get('/sendphotos', (req, res) => {
   res.render('sendphoto');
 });
 
 app.post('/sendphotos', upload.single('image'), (req, res) => {
-  res.send('<h1>Thanks for sending the pics bruh</h1>')
+  console.log(req.file);
+  
+
+  res.send('<h1>Thanks for contributing!</h1>')
 });
 
 app.all('*', (req, res) => {
@@ -75,7 +90,3 @@ app.listen(PORT, () => {
   console.log(`Node.js server started. Listening on ${ PORT }.`);
 });
 
-
-// Child process exec
-// Use npm to install cal to this directory.
-// Interface directly with cal
