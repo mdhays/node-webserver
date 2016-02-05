@@ -9,6 +9,9 @@ const multer = require('multer');
 const request = require('request');
 const _ = require('lodash');
 const cheerio = require('cheerio');
+const imgur = require('imgur');
+
+// This handles storing files on the system until they're uploaded.
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'tmp/uploads')
@@ -67,16 +70,19 @@ app.get('/api/news', (req, res) => {
 
     const news = [];
     const $ = cheerio.load(body);
-
+    // Cached jquery selectors (always do this!).
+    // This is very important for performance, and is part of some code tests and interviews.
+    const $bannerText = $('.banner-text');
+    const $cdHeadLine = $('.cd__headline');
     news.push({
-      title: $('.banner-text').text(),
-      url: $('.banner-text').closest('a').attr('href')
+      title: $bannerText.text(),
+      url: $bannerText.closest('a').attr('href')
     });
 
     _.range(1, 12).forEach(i => {
         news.push({
-        'title': $('.cd__headline').eq(i).text(),
-        'url': $('.cd__headline').eq(i).find('a').attr('href')
+        'title': $cdHeadLine.eq(i).text(),
+        'url': $cdHeadLine.eq(i).find('a').attr('href')
       });
     });
 
@@ -130,10 +136,19 @@ app.get('/sendphotos', (req, res) => {
 });
 
 app.post('/sendphotos', upload.single('image'), (req, res) => {
-  console.log(req.file);
-  
+  console.log(req.file.path);
 
-  res.send('<h1>Thanks for contributing!</h1>')
+  imgur.uploadFile(req.file.path)
+    .then(function (json) {
+        console.log(json.data.link);
+        fs.unlink(req.file.path, () => {
+          console.log('File Successfully Deleted');
+    });
+        res.render('success', {pic: json.data.link});
+  })  
+    .catch(function (err) {
+        console.error('Attempt failed');
+    });
 });
 
 app.all('*', (req, res) => {
@@ -145,3 +160,5 @@ app.listen(PORT, () => {
   console.log(`Node.js server started. Listening on ${ PORT }.`);
 });
 
+// fs.unlink
+// mess around with webscraping
