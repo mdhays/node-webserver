@@ -13,8 +13,6 @@ router.use(api);
 router.use(contact);
 router.use(hello);
 router.use(home);
-router.use(random);
-router.use(secret);
 router.use(sendphotos);
 
 module.exports = router;

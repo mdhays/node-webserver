@@ -5,7 +5,7 @@ const router = express.Router();
 
 const Contact = require('../models/contact');
 
-router.get('/', (req, res) => {
+router.get('/contact', (req, res) => {
   res.render('contact');
 });
 
