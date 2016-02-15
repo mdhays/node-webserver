@@ -8,13 +8,17 @@ const routes = require('./routes/');
 
 const PORT = process.env.PORT || 3000;
 
-if(production) {
-  const MONGODB_URL = 'mongodb://ds039135.mongolab.com:39135/node-webserver';  
-} else {
-  const MONGODB_URL = 'mongodb://localhost:27017/node-webserver';
-}
+const MONGODB_HOST = process.env.MONGODB_HOST || 'localhost';
+const MONGODB_PORT = process.env.MONGODB_PORT || 27017;
+const MONGODB_USER = process.env.MONGODB_USER || '';
+const MONGODB_PASS = process.env.MONGODB_PASS || '';
+const MONGODB_NAME = process.env.MONGODB_NAME || 'node-webserver';
 
+const MOGNODB_URL_PREFIX = MONGODB_USER
+  ? `${MONGODB_USER}:${MONGODB_PASS}@`
+  : '';
 
+const MONGODB_URL = `mongodb://${MOGNODB_URL_PREFIX}${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_NAME}`;
 
 app.set('view engine', 'jade');
 
