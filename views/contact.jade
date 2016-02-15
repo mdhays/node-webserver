@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title #{title}
+  body
+    .container
+      h1 Contact
+      form(method='POST')
+        .form group
+          label Name
+          input(type='text', name='name', placeholder='Abe Lincoln')
+        .form group
+          label Email
+          input(type='email', name='email', placeholder='abe@wh.gov')
+        .form group
+          label Message
+          input(type='text', name='message', placeholder='write here')
+        .form group
+          input(type='submit', value='Contact Us!')
